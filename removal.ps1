@@ -23,13 +23,63 @@ Write-Host "======================================="
 
 # Ask for user confirmation before continuing
 Write-Host "This script will attempt to remove yoursearchbar.me extension malware from your computer."
-Write-Host "The script should work with the extension version 9.8. It may take a while to complete."
-Write-Host "Chrome and Edge will be closed now - please save your work before continuing."
+Write-Host "The script should work with the extension version 9.8, and it may take a while to complete."
+Write-Host "Chrome and Edge will be closed now - please save your work before proceeding."
+Write-Host "WARNING: Microsoft Edge might not work properly after running this script."
 Write-Host "Do you want to continue? [Y/N]"
 if ((Read-Host).ToUpper() -ne "Y") {
     Write-Host "Aborting..."
     exit
 }
+
+# Verify that the three .dll files are present and verify their integrity with SHA256 checksums
+Write-Host "`nVerifying integrity of required files..."
+$fileChecksums = @{
+    "generic-core-msedge.dll" = "34f4a2f2291be56203db3831620750f34a37af1f168bd337f292be8bd6bbb438"
+    "generic-msedge.dll" = "34f4a2f2291be56203db3831620750f34a37af1f168bd337f292be8bd6bbb438"
+    "generic-webview-msedge.dll" = "cd156e02e75c9f465bb4b94f0ea21cc736c6439a1691297cbd378084f7187c54"
+}
+
+# Iterate over each file in the hashtable
+foreach ($file in $fileChecksums.Keys) {
+    $filePath = Join-Path -Path (Get-Location) -ChildPath $file
+    $expectedChecksum = $fileChecksums[$file]
+    $fileExists = Test-Path $filePath
+    $checksumMatch = $false
+
+    # If the file exists, verify its checksum
+    if ($fileExists) {
+        $actualChecksum = Get-FileHash -Path $filePath -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+        $checksumMatch = $actualChecksum -eq $expectedChecksum
+    }
+
+    # If the file does not exist or the checksum does not match, download the file from GitHub
+    if (-Not $fileExists -or -Not $checksumMatch) {
+        if (-Not $fileExists) {
+            Write-Host "- File $file is missing and will be downloaded."
+        } elseif (-Not $checksumMatch) {
+            Write-Host "- File $file has an invalid checksum and will be re-downloaded."
+        }
+
+        $url = "https://github.com/E-B3rry/yoursearchbar.me-removal/raw/master/$file"
+        try {
+            Invoke-WebRequest -Uri $url -OutFile $filePath
+
+            # Verify the downloaded file's checksum
+            $actualChecksum = Get-FileHash -Path $filePath -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+            if ($actualChecksum -eq $expectedChecksum) {
+                Write-Host "File $file downloaded and verified successfully."
+            } else {
+                Write-Host "[!] Fatal Error: File $file could not be verified after download. Checksum does not match.`nAborting..."
+                exit
+            }
+        } catch {
+            Write-Host "[!] Fatal Error: File $file could not be downloaded: $_`nAborting..."
+            exit
+        }
+    }
+}
+Write-Host "All required files are present and verified."
 
 # Kill all chrome.exe and msedge.exe processes
 Write-Host "`nKilling Chrome and Edge processes..."
