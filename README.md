@@ -41,6 +41,7 @@ The script will then tell you what it is doing and will ask for your confirmatio
 
 - You may need to confirm that you want to run the script with administrative privileges (UAC). Click "Yes" if prompted.
 - It is possible that Microsoft Edge doesn't work after the script completes. If this happens, please try to [repair your installation](https://support.microsoft.com/en-us/microsoft-edge/what-to-do-if-microsoft-edge-isn-t-working-cc0657a6-acd2-cbbd-1528-c0335c71312a).
+- When downloading the script following the instructions above ("Download ZIP" button), it won't download the three `.dll` files because of GitHub limitations with big files. Therefore, the script will download it itself at runtime, don't worry if it takes a while, it essentially depends on your internet connection.
 - After the script completes, please restart your computer to ensure all changes take effect.
 - If the malware is still present after the script completes, it is possible that you installed a software on your computer that ensure the malware is reinstalled. Please check your installed programs and remove any suspicious software.
 
