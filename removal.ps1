@@ -114,7 +114,7 @@ if ($infectedScripts.Count -gt 0) {
     Write-Host "The following files are potentially infected:"
     $infectedScripts | ForEach-Object { Write-Host $_ }
 
-    Write-Host "`nDo you want to remove them? [Y/N]"  -ForegroundColor WARNING
+    Write-Host "`nDo you want to remove them? [Y/N]"  -ForegroundColor Yellow
 
     if ((Read-Host).ToUpper() -ne "Y") {
         Write-Host "Aborting..."  -ForegroundColor Red
