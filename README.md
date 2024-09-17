@@ -1,3 +1,6 @@
+> [!IMPORTANT]  
+> This menace is now identified as "Trojan:PowerShell/TommyTech.C". There is quite probably no need for you to use this script as Windows Defender will take care of it. Whatever you have, it might not be this specific branch of the virus.
+
 # YourSearchBar.me Removal Tool
 
 This PowerShell script is designed to hopefully **remove the *yoursearchbar.me*** extension malware from your Windows computer.
